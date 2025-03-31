@@ -1,19 +1,31 @@
 TOKEN_API = "6598630985:AAH6hm8idDR8J4SxkhljfEzBoYnKE4Q4X4s"
 # tg: @Dungeon_GameBot
 
+# Пути к изображениям персонажей и монстров
+wizard_img = 'image/wizard.png'
+knight_img = 'image/knight.png'
+
+spider_img = 'image/spider.png'
+slime_img = 'image/slime.png'
+golem_img = 'image/golem.png'
+skeleton_img = 'image/skeleton.png'
+
+dragon_img = 'image/dragon.png'
+demon_img = 'image/demon.png'
+
 # Характеристика персонажей
-wizard = dict(name='Волшебник', pw=60, hp=55)
-knight = dict(name='Рыцарь', pw=40, hp=70)
+wizard = dict(name='Волшебник', power=60, health=55)
+knight = dict(name='Рыцарь', power=40, health=70)
 
 # Характеристики монстров
-slime = dict(name='Слайм', pw=20, hp=40)
-spider = dict(name='Паук', pw=30, hp=40)
-skeleton = dict(name='Скелет', pw=40, hp=50)
-golem = dict(name='Голем', pw=45, hp=65)
+slime = dict(name='Слайм', power=20, health=40)
+spider = dict(name='Паук', power=30, health=40)
+skeleton = dict(name='Скелет', power=40, health=50)
+golem = dict(name='Голем', power=45, health=65)
 
 # Характеристики боссов
-demon = dict(name='Демон', pw=75, hp=85)  # Босс для Волшебника
-dragon = dict(name='Дракон', pw=55, hp=90)  # Босс для Рыцаря
+demon = dict(name='Демон', power=75, health=85)  # Босс для Волшебника
+dragon = dict(name='Дракон', power=55, health=90)  # Босс для Рыцаря
 
 # Здоровье персонажей
 HP_KNIGHT = 70
@@ -42,26 +54,17 @@ Dungeon Game - это телеграм-игра в жанре RPG.
 финальной битве с боссом одержать победу.
 '''
 
-KNIGHT_OPS = f'''
-Характеристики рыцаря:\n
-Здоровье: {knight["hp"]}
-Сила: {knight["pw"]}
-'''
-
-WIZARD_OPS = f'''
-Характеристики волшебника:\n
-Здоровье: {wizard["hp"]}
-Сила: {wizard["pw"]}
-'''
-
-
 START_GAME_TEXT = f'''
 Перед началом ознакомьтесь с характеристиками персонажей, которых вам надо будет выбрать для прохождения игры:
-{WIZARD_OPS}
 
-{KNIGHT_OPS}
+Характеристики волшебника:
+Здоровье: {wizard["health"]}
+Сила: {wizard["power"]}
+
+Характеристики рыцаря:
+Здоровье: {knight["health"]}
+Сила: {knight["power"]}
 '''
-
 
 WIZARD_HISTORY = '''
 Волшебник, хороший выбор!
@@ -83,43 +86,43 @@ KNIGHT_START_TEXT = '''
 SLIME_MEETING = f'''
 Вы встречайте перед собой слайма. Перед тем как выбрать действие посмотрите характеристики монстра:\n
 Характеристики слайма:
-Здоровье: {slime["hp"]}
-Сила: {slime["pw"]}
+Здоровье: {slime["health"]}
+Сила: {slime["power"]}
 '''
 
 SPIDER_MEETING = f'''
 Вы встречайте перед собой паука. Перед тем как выбрать действие посмотрите характеристики монстра:\n
 Характеристики паука:
-Здоровье: {spider["hp"]}
-Сила: {spider["pw"]}
+Здоровье: {spider["health"]}
+Сила: {spider["power"]}
 '''
 
 SKELETON_MEETING = f'''
 Вы встречайте перед собой скелета. Перед тем как выбрать действие посмотрите характеристики монстра:\n
 Характеристики скелета:
-Здоровье: {skeleton["hp"]}
-Сила: {skeleton["pw"]}
+Здоровье: {skeleton["health"]}
+Сила: {skeleton["power"]}
 '''
 
 GOLEM_MEETING = f'''
 Вы встречайте перед собой голем. Перед тем как выбрать действие посмотрите характеристики монстра:\n
 Характеристики голема:
-Здоровье: {golem["hp"]}
-Сила: {golem["pw"]}
+Здоровье: {golem["health"]}
+Сила: {golem["power"]}
 '''
 
 DEMON_MEETING = f'''
 Входя в огромную комнату, вы встречайте перед собой демона, вот его характеристики:\n
 Характеристики демона:
-Здоровье: {demon["hp"]}
-Сила: {demon["pw"]}
+Здоровье: {demon["health"]}
+Сила: {demon["power"]}
 '''
 
 DRAGON_MEETING = f'''
 Входя в огромную комнату, вы встречайте перед собой дракона, вот его характеристики:\n
 Характеристики дракона:
-Здоровье: {dragon["hp"]}
-Сила: {dragon["pw"]}
+Здоровье: {dragon["health"]}
+Сила: {dragon["power"]}
 '''
 
 YOU_DEAD_DEMON_WIZARD = '''
@@ -224,32 +227,32 @@ YOU_WIN_SKELETON = '''
 TRANSITION_SPIDER = f'''
 Войдя в другую дверь, вы видите перед собой паука с характеристиками:\n
 Характеристики паука:
-Здоровье: {spider["hp"]}
-Сила: {spider["pw"]}\n
+Здоровье: {spider["health"]}
+Сила: {spider["power"]}\n
 Вариантов у вас не будет, вы точно будете сражаться с пауком, т.к сбежали из другой комнаты.
 '''
 
 TRANSITION_SLIME = f'''
 Войдя в другую дверь, вы видите перед собой слайма с характеристиками:\n
 Характеристики слайма:
-Здоровье: {slime["hp"]}
-Сила: {slime["pw"]}\n
+Здоровье: {slime["health"]}
+Сила: {slime["power"]}\n
 Вариантов у вас не будет, вы точно будете сражаться со слаймом, т.к сбежали из другой комнаты.
 '''
 
 TRANSITION_SKELETON = f'''
 Войдя в другую дверь, вы видите перед собой скелета с характеристиками:\n
 Характеристики скелета:
-Здоровье: {skeleton["hp"]}
-Сила: {skeleton["pw"]}\n
+Здоровье: {skeleton["health"]}
+Сила: {skeleton["power"]}\n
 Вариантов у вас не будет, вы точно будете сражаться с скелетом, т.к сбежали из другой комнаты.
 '''
 
 TRANSITION_GOLEM = f'''
 Войдя в другую дверь, вы видите перед собой голема с характеристиками:\n
 Характеристики голема:
-Здоровье: {golem["hp"]}
-Сила: {golem["pw"]}\n
+Здоровье: {golem["health"]}
+Сила: {golem["power"]}\n
 Вариантов у вас не будет, вы точно будете сражаться с големом, т.к сбежали из другой комнаты.
 '''
 
