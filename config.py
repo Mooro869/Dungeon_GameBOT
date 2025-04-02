@@ -14,32 +14,32 @@ dragon_img = 'image/dragon.png'
 demon_img = 'image/demon.png'
 
 # Характеристика персонажей
-wizard = dict(name='Волшебник', power=60, health=55)
-knight = dict(name='Рыцарь', power=40, health=70)
+wizard = dict(name='Волшебник', power=60, health=60)
+knight = dict(name='Рыцарь', power=50, health=70)
 
 # Характеристики монстров
-slime = dict(name='Слайм', power=20, health=40)
-spider = dict(name='Паук', power=30, health=40)
-skeleton = dict(name='Скелет', power=40, health=50)
-golem = dict(name='Голем', power=45, health=65)
+slime = dict(name='Слайм', power=15, health=25)
+spider = dict(name='Паук', power=20, health=35)
+skeleton = dict(name='Скелет', power=25, health=45)
+golem = dict(name='Голем', power=30, health=50)
 
 # Характеристики боссов
-demon = dict(name='Демон', power=75, health=85)  # Босс для Волшебника
-dragon = dict(name='Дракон', power=55, health=90)  # Босс для Рыцаря
+demon = dict(name='Демон', power=20, health=100)  # Босс для Волшебника
+dragon = dict(name='Дракон', power=15, health=100)  # Босс для Рыцаря
 
 # Здоровье персонажей
 HP_KNIGHT = 70
-HP_WIZARD = 55
+HP_WIZARD = 60
 
 # Здоровье монстров
-HP_SLIME = 30
-HP_SPIDER = 40
-HP_SKELETON = 60
-HP_GOLEM = 65
+HP_SLIME = 25
+HP_SPIDER = 35
+HP_SKELETON = 45
+HP_GOLEM = 50
 
 # Здоровье боссов
-HP_DEMON = 85
-HP_DRAGON = 90
+HP_DEMON = 100
+HP_DRAGON = 100
 
 # Текст при запуске бота
 START_TEXT = ''' 
