@@ -35,11 +35,13 @@ async def information_command(message: types.Message):
 async def start_command(message: types.Message):
     config.wizard['health'] = config.HP_WIZARD
     config.knight['health'] = config.HP_KNIGHT
+
     media = [
-        types.InputMediaPhoto(open(config.knight_img, 'rb')),
-        types.InputMediaPhoto(open(config.wizard_img, 'rb'))
+        types.InputMediaPhoto(open(config.wizard_img, 'rb')),
+        types.InputMediaPhoto(open(config.knight_img, 'rb'))
     ]
     await bot.send_media_group(chat_id=message.chat.id, media=media)
+
     await message.answer(text=config.START_GAME_TEXT, reply_markup=kb.persons_button)
 
 
@@ -62,6 +64,8 @@ async def wizard_delete_button(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(lambda x: x.data == "wizard_door1_1")
 async def wizard_room1_buttons(callback_query: types.CallbackQuery):  # Функция с основным выводом текста
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.spider_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.SPIDER_MEETING,
                            reply_markup=kb.wizard_battle1_1)
@@ -72,6 +76,8 @@ async def wizard_room1_buttons(callback_query: types.CallbackQuery):  # Функ
 @dp.callback_query_handler(lambda x: x.data == "wizard_door1_2")
 async def wizard_room1_buttons(callback_query: types.CallbackQuery):  # Функция с основным выводом текста
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.slime_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.SLIME_MEETING,
                            reply_markup=kb.wizard_battle1_2)
@@ -81,6 +87,8 @@ async def wizard_room1_buttons(callback_query: types.CallbackQuery):  # Функ
 @dp.callback_query_handler(lambda x: x.data == "wizard_door2_1")
 async def wizard_room2_delete_buttons(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.slime_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.SLIME_MEETING,
                            reply_markup=kb.wizard_battle2_1)
@@ -90,6 +98,8 @@ async def wizard_room2_delete_buttons(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(lambda x: x.data == "wizard_door2_2")
 async def wizard_room2_delete_buttons(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.skeleton_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.SKELETON_MEETING,
                            reply_markup=kb.wizard_battle2_2)
@@ -99,6 +109,8 @@ async def wizard_room2_delete_buttons(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(lambda x: x.data == "wizard_door3_1")
 async def wizard_room3_delete_buttons(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.golem_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.GOLEM_MEETING,
                            reply_markup=kb.wizard_battle3_1)
@@ -108,6 +120,8 @@ async def wizard_room3_delete_buttons(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(lambda x: x.data == "wizard_door3_2")
 async def wizard_room3_delete_buttons(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.spider_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.SPIDER_MEETING,
                            reply_markup=kb.wizard_battle3_2)
@@ -117,6 +131,8 @@ async def wizard_room3_delete_buttons(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(lambda x: x.data == "wizard_door4_1")
 async def wizard_room4_delete_buttons(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.spider_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.SPIDER_MEETING,
                            reply_markup=kb.wizard_battle4_1)
@@ -126,6 +142,8 @@ async def wizard_room4_delete_buttons(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(lambda x: x.data == "wizard_door4_2")
 async def wizard_room4_delete_buttons(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.skeleton_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.SKELETON_MEETING,
                            reply_markup=kb.wizard_battle4_2)
@@ -137,12 +155,14 @@ async def wizard_room5_delete_buttons(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     config.wizard['health'] += 15
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.BONUS_HP + str(config.wizard['health']))
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.demon_img, 'rb'))])
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.DEMON_MEETING,
                            reply_markup=kb.wizard_battle5)
 
 
 '''
-Функции атаки волшебнкиа
+Функции атаки волшебника
 '''
 
 
@@ -744,6 +764,8 @@ async def knight_delete_button(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(lambda x: x.data == "knight_door1_1")
 async def knight_room1_delete_buttons(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.skeleton_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.SKELETON_MEETING,
                            reply_markup=kb.knight_battle1_1)
@@ -753,6 +775,8 @@ async def knight_room1_delete_buttons(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(lambda x: x.data == "knight_door1_2")
 async def knight_room1_buttons(callback_query: types.CallbackQuery):  # Функция с основным выводом текста
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.spider_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.SPIDER_MEETING,
                            reply_markup=kb.knight_battle1_2)
@@ -762,6 +786,8 @@ async def knight_room1_buttons(callback_query: types.CallbackQuery):  # Функ
 @dp.callback_query_handler(lambda x: x.data == "knight_door2_1")
 async def knight_room2_delete_buttons(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.slime_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.SLIME_MEETING,
                            reply_markup=kb.knight_battle2_1)
@@ -771,6 +797,8 @@ async def knight_room2_delete_buttons(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(lambda x: x.data == "knight_door2_2")
 async def knight_room2_delete_buttons(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.skeleton_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.SKELETON_MEETING,
                            reply_markup=kb.knight_battle2_2)
@@ -780,6 +808,8 @@ async def knight_room2_delete_buttons(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(lambda x: x.data == "knight_door3_1")
 async def knight_room3_delete_buttons(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.golem_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.GOLEM_MEETING,
                            reply_markup=kb.knight_battle3_1)
@@ -789,6 +819,8 @@ async def knight_room3_delete_buttons(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(lambda x: x.data == "knight_door3_2")
 async def knight_room3_delete_buttons(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.spider_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.SPIDER_MEETING,
                            reply_markup=kb.knight_battle3_2)
@@ -798,6 +830,8 @@ async def knight_room3_delete_buttons(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(lambda x: x.data == "knight_door4_1")
 async def knight_room4_delete_buttons(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.slime_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.SLIME_MEETING,
                            reply_markup=kb.knight_battle4_1)
@@ -807,6 +841,8 @@ async def knight_room4_delete_buttons(callback_query: types.CallbackQuery):
 @dp.callback_query_handler(lambda x: x.data == "knight_door4_2")
 async def knight_room4_delete_buttons(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.golem_img, 'rb'))])
     # вывод кнопок
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.GOLEM_MEETING,
                            reply_markup=kb.knight_battle4_2)
@@ -818,6 +854,8 @@ async def wizard_room5_delete_buttons(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     config.knight['health'] += 15
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.BONUS_HP + str(config.knight['health']))
+    await bot.send_media_group(chat_id=callback_query.from_user.id,
+                               media=[types.InputMediaPhoto(open(config.dragon_img_img, 'rb'))])
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.DRAGON_MEETING,
                            reply_markup=kb.knight_battle5)
 
