@@ -4,7 +4,8 @@ from aiogram import types
 keyb = types.ReplyKeyboardMarkup(resize_keyboard=True)
 info_button = types.KeyboardButton('Информацияℹ️')
 start_game = types.KeyboardButton('Начать игру🎮')
-keyb.add(start_game, info_button)
+statistic_button = types.KeyboardButton('Статистика📋')
+keyb.add(start_game, statistic_button, info_button)
 
 # Кнопки персонажей
 persons_button = types.InlineKeyboardMarkup(row_width=2)
@@ -14,7 +15,7 @@ persons_button.add(wizard, knight)
 
 '''
 ОСНОВНЫЕ КНОПКИ ДЛЯ КАЖДОЙ ДВЕРИ
-ВОЛШЕБНИК
+ВОЛШЕБНИКА
 '''
 
 # Основные кнопки 1_1
@@ -130,7 +131,7 @@ knight_battle5.add(knight_attack5)  # будет только кнопка ат�
 
 '''
 КНОПКИ ДВЕРЕЙ
-ВОЛШЕБНИК
+ВОЛШЕБНИКА
 '''
 
 # Двери 1 комната
@@ -164,7 +165,7 @@ wizard_doors5.add(wizard_door5)
 
 '''
 КНОПКИ ДВЕРЕЙ
-РЫЦАРЬ
+РЫЦАРЯ
 '''
 
 # Двери 1 комната

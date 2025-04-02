@@ -4,6 +4,7 @@ import sqlite3
 
 from aiogram import Bot, Dispatcher, types
 from aiogram import executor
+from aiogram.types import InputMediaPhoto
 
 import config
 import keyboard as kb
@@ -20,6 +21,11 @@ async def start_command(message: types.Message):
     await message.answer(text=config.START_TEXT, reply_markup=kb.keyb)
 
 
+@dp.message_handler(text=['Статистика📋'])
+async def information_command(message: types.Message):
+    await message.answer(text='ТУТ СКОРО БУДЕТ СТАТИСТИКА!')
+
+
 @dp.message_handler(text=['Информацияℹ️'])
 async def information_command(message: types.Message):
     await message.answer(text=config.INFORMATION_TEXT)
@@ -29,6 +35,11 @@ async def information_command(message: types.Message):
 async def start_command(message: types.Message):
     config.wizard['health'] = config.HP_WIZARD
     config.knight['health'] = config.HP_KNIGHT
+    media = [
+        types.InputMediaPhoto(open(config.knight_img, 'rb')),
+        types.InputMediaPhoto(open(config.wizard_img, 'rb'))
+    ]
+    await bot.send_media_group(chat_id=message.chat.id, media=media)
     await message.answer(text=config.START_GAME_TEXT, reply_markup=kb.persons_button)
 
 
