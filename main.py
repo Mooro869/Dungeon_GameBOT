@@ -1,13 +1,29 @@
+from datetime import *
 import random
 import time
 import sqlite3
 
 from aiogram import Bot, Dispatcher, types
 from aiogram import executor
-from aiogram.types import InputMediaPhoto
 
 import config
 import keyboard as kb
+
+'''
+ПРИМЕР ПОЛУЧЕНИЯ ИМЕНИ ПОЛЬЗОВАТЕЛЯ:
+
+await bot.send_message(message.from_user.id, f"Привет, {message.from_user.full_name}")
+'''
+
+damage = 0  # Переменная, в которой будет храниться нанесенный урон за всю игру
+remaining_health = 0  # Переменная, в которой будет храниться количество здоровья, оставшееся после конца игры
+date = datetime.now().strftime("%Y-%m-%d %H:%M")  # Получаем текущую дату и время
+
+
+def get_statistic(username=None, time=date, damage_done=damage, win_lose=None, character=None,
+                  health=remaining_health):
+    ...
+
 
 # @Dungeon_GameBot
 bot = Bot(token=config.TOKEN_API)
@@ -18,7 +34,7 @@ dp = Dispatcher(bot=bot)
 # ОСНОВНЫЕ КНОПКИ
 @dp.message_handler(commands=['start'])
 async def start_command(message: types.Message):
-    await message.answer(text=config.START_TEXT, reply_markup=kb.keyb)
+    await message.answer(text=f"Здравствуй {message.from_user.full_name}!" + config.START_TEXT, reply_markup=kb.keyb)
 
 
 @dp.message_handler(text=['Статистика📋'])

@@ -24,8 +24,8 @@ skeleton = dict(name='Скелет', power=25, health=45)
 golem = dict(name='Голем', power=30, health=50)
 
 # Характеристики боссов
-demon = dict(name='Демон', power=20, health=100)  # Босс для Волшебника
-dragon = dict(name='Дракон', power=15, health=100)  # Босс для Рыцаря
+demon = dict(name='Демон', power=40, health=100)  # Босс для Волшебника
+dragon = dict(name='Дракон', power=35, health=100)  # Босс для Рыцаря
 
 # Здоровье персонажей
 HP_KNIGHT = 70
@@ -43,7 +43,7 @@ HP_DRAGON = 100
 
 # Текст при запуске бота
 START_TEXT = ''' 
-Здравствуй, друг! Приветствую тебя в моей игре. 
+Приветствую тебя в моей игре. 
 Желаю тебе удачи пройти её!
 '''
 
