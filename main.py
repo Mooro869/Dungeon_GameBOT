@@ -15,12 +15,14 @@ import keyboard as kb
 await bot.send_message(message.from_user.id, f"Привет, {message.from_user.full_name}")
 '''
 
+global name, damage, remaining_health
+name = ''  # Переменная, в которую записывается каждый раз имя игрока
 damage = 0  # Переменная, в которой будет храниться нанесенный урон за всю игру
 remaining_health = 0  # Переменная, в которой будет храниться количество здоровья, оставшееся после конца игры
 date = datetime.now().strftime("%Y-%m-%d %H:%M")  # Получаем текущую дату и время
 
 
-def get_statistic(username=None, time=date, damage_done=damage, win_lose=None, character=None,
+def get_statistic(username=name, time=date, damage_done=damage, win_lose=None, character=None,
                   health=remaining_health):
     ...
 
@@ -40,6 +42,7 @@ async def start_command(message: types.Message):
 @dp.message_handler(text=['Статистика📋'])
 async def information_command(message: types.Message):
     await message.answer(text='ТУТ СКОРО БУДЕТ СТАТИСТИКА!')
+    # await message.answer(text=get_statistic(...))
 
 
 @dp.message_handler(text=['Информацияℹ️'])
@@ -49,6 +52,10 @@ async def information_command(message: types.Message):
 
 @dp.message_handler(text=['Начать игру🎮'])
 async def start_command(message: types.Message):
+    damage = 0
+    remaining_health = 0
+    name = str(message.from_user.full_name)
+
     config.wizard['health'] = config.HP_WIZARD
     config.knight['health'] = config.HP_KNIGHT
 
