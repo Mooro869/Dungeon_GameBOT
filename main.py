@@ -9,22 +9,24 @@ from aiogram import executor
 import config
 import keyboard as kb
 
-'''
-ПРИМЕР ПОЛУЧЕНИЯ ИМЕНИ ПОЛЬЗОВАТЕЛЯ:
-
-await bot.send_message(message.from_user.id, f"Привет, {message.from_user.full_name}")
-'''
-
-global name, damage, remaining_health
-name = ''  # Переменная, в которую записывается каждый раз имя игрока
-damage = 0  # Переменная, в которой будет храниться нанесенный урон за всю игру
-remaining_health = 0  # Переменная, в которой будет храниться количество здоровья, оставшееся после конца игры
+name = ''  # Переменная, в которую записывается каждый раз имя игрока взятое из телеграмма
+chart_name = ''  # Переменная, в которую будет записываться имя персонажа выбранного игроком
+status = ''  # Переменная, в которой хранится информация о победе или поражении игрока
 date = datetime.now().strftime("%Y-%m-%d %H:%M")  # Получаем текущую дату и время
 
 
-def get_statistic(username=name, time=date, damage_done=damage, win_lose=None, character=None,
-                  health=remaining_health):
-    ...
+def uploading_statistics_in_database(username=name, times=date, win_lose=status, character=chart_name):
+    conn = sqlite3.connect(config.db_file)
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO Rating (username, time, win_lose, character) VALUES (?, ?, ?, ?)",
+        (username, times, win_lose, character))
+    conn.commit()
+    conn.close()
+
+
+def get_statistic():
+    ...  # тут будет запрос, который будет выводить нужную статистику по username
 
 
 # @Dungeon_GameBot
@@ -37,6 +39,8 @@ dp = Dispatcher(bot=bot)
 @dp.message_handler(commands=['start'])
 async def start_command(message: types.Message):
     await message.answer(text=f"Здравствуй {message.from_user.full_name}!" + config.START_TEXT, reply_markup=kb.keyb)
+
+
 
 
 @dp.message_handler(text=['Статистика📋'])
@@ -52,10 +56,6 @@ async def information_command(message: types.Message):
 
 @dp.message_handler(text=['Начать игру🎮'])
 async def start_command(message: types.Message):
-    damage = 0
-    remaining_health = 0
-    name = str(message.from_user.full_name)
-
     config.wizard['health'] = config.HP_WIZARD
     config.knight['health'] = config.HP_KNIGHT
 
@@ -202,6 +202,7 @@ async def wizard1_1_attack(callback_query: types.CallbackQuery):
         config.wizard['health'] -= sp_push
         if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
             config.spider['health'] = config.HP_SPIDER
+            uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SPIDER)
             await dp.wait_closed()
             break
@@ -229,7 +230,8 @@ async def wizard1_2_attack(callback_query: types.CallbackQuery):
         config.slime['health'] -= w_push
         config.wizard['health'] -= sl_push
         if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
-            config.slime['health'] = config.HP_SLIME  # Возвращаем здоровье слайму после драки
+            config.slime['health'] = config.HP_SLIME  # Возвращаем здоровье слайму
+            uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SLIME)
             await dp.wait_closed()
             break
@@ -258,7 +260,8 @@ async def wizard2_1_attack(callback_query: types.CallbackQuery):
         config.slime['health'] -= w_push
         config.wizard['health'] -= sl_push
         if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
-            config.slime['health'] = config.HP_SLIME  # Возвращаем здоровье слайму после драки
+            config.slime['health'] = config.HP_SLIME  # Возвращаем здоровье слайму
+            uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SLIME)
             await dp.wait_closed()
             break
@@ -286,7 +289,8 @@ async def wizard2_2_attack(callback_query: types.CallbackQuery):
         config.skeleton['health'] -= w_push
         config.wizard['health'] -= sk_push
         if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
-            config.skeleton['health'] = config.HP_SKELETON  # Возвращаем здоровье скелету после драки
+            config.skeleton['health'] = config.HP_SKELETON  # Возвращаем здоровье скелету
+            uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SKELETON)
             await dp.wait_closed()
             break
@@ -314,7 +318,8 @@ async def wizard3_1_attack(callback_query: types.CallbackQuery):
         config.golem['health'] -= w_push
         config.wizard['health'] -= g_push
         if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
-            config.golem['health'] = config.HP_GOLEM  # Возвращаем здоровье голему после драки
+            config.golem['health'] = config.HP_GOLEM  # Возвращаем здоровье голему
+            uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_GOLEM)
             await dp.wait_closed()
             break
@@ -343,6 +348,7 @@ async def wizard3_2_attack(callback_query: types.CallbackQuery):
         config.wizard['health'] -= sp_push
         if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
             config.spider['health'] = config.HP_SPIDER
+            uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SPIDER)
             await dp.wait_closed()
             break
@@ -371,6 +377,7 @@ async def wizard4_1_attack(callback_query: types.CallbackQuery):
         config.wizard['health'] -= sp_push
         if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
             config.spider['health'] = config.HP_SPIDER
+            uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SPIDER)
             await dp.wait_closed()
             break
@@ -398,7 +405,8 @@ async def wizard4_2_attack(callback_query: types.CallbackQuery):
         config.skeleton['health'] -= w_push
         config.wizard['health'] -= sk_push
         if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
-            config.skeleton['health'] = config.HP_SKELETON  # Возвращаем здоровье скелету после драки
+            config.skeleton['health'] = config.HP_SKELETON  # Возвращаем здоровье скелету
+            uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SKELETON)
             break
         elif config.wizard['health'] >= 1:
@@ -428,11 +436,13 @@ async def wizard5_attack(callback_query: types.CallbackQuery):
         config.wizard['health'] -= de_push
         if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
             config.demon['health'] = config.HP_DEMON
+            uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_DEMON_WIZARD)
             break
         elif config.wizard['health'] >= 1:
             config.demon['health'] = config.HP_DEMON
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.END_GAME_WIZARD)
+            uploading_statistics_in_database(win_lose='Победа', character='Wizard')
             break
 
 
@@ -446,17 +456,20 @@ async def wizard5_attack(callback_query: types.CallbackQuery):
 async def wizard1_1_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_SPIDER)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.wizard['health'] -= 5
+    config.wizard['health'] -= config.ESCAPE_PENALTY_SPIDER
     if config.wizard['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
                                text=config.AFTER_AWAY + str(config.wizard['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.slime_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_SLIME)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
         while config.wizard['health'] > 0 and config.slime['health'] > 0:
             w_push = random.randint(1, config.wizard['power'])
@@ -465,6 +478,7 @@ async def wizard1_1_away(callback_query: types.CallbackQuery):
             config.wizard['health'] -= sl_push
             if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
                 config.slime['health'] = config.HP_SLIME
+                uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SLIME)
                 dp.stop_polling()
                 await dp.wait_closed()
@@ -487,17 +501,20 @@ async def wizard1_1_away(callback_query: types.CallbackQuery):
 async def wizard1_2_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_SLIME)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.wizard['health'] -= 5
+    config.wizard['health'] -= config.ESCAPE_PENALTY_SPIDER
     if config.wizard['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
                                text=config.AFTER_AWAY + str(config.wizard['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.spider_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_SPIDER)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
         while config.wizard['health'] > 0 and config.spider['health'] > 0:
             w_push = random.randint(1, config.wizard['power'])
@@ -506,6 +523,7 @@ async def wizard1_2_away(callback_query: types.CallbackQuery):
             config.wizard['health'] -= sp_push
             if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
                 config.spider['health'] = config.HP_SPIDER
+                uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SPIDER)
                 dp.stop_polling()
                 await dp.wait_closed()
@@ -528,17 +546,20 @@ async def wizard1_2_away(callback_query: types.CallbackQuery):
 async def wizard2_1_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_SLIME)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.wizard['health'] -= 3
+    config.wizard['health'] -= config.ESCAPE_PENALTY_SLIME
     if config.wizard['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
                                text=config.AFTER_AWAY + str(config.wizard['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.skeleton_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_SKELETON)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
         while config.wizard['health'] > 0 and config.skeleton['health'] > 0:
             w_push = random.randint(1, config.wizard['power'])
@@ -547,6 +568,7 @@ async def wizard2_1_away(callback_query: types.CallbackQuery):
             config.wizard['health'] -= sk_push
             if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
                 config.skeleton['health'] = config.HP_SKELETON
+                uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SKELETON)
                 dp.stop_polling()
                 await dp.wait_closed()
@@ -569,17 +591,20 @@ async def wizard2_1_away(callback_query: types.CallbackQuery):
 async def wizard2_2_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_SKELETON)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.wizard['health'] -= 7
+    config.wizard['health'] -= config.ESCAPE_PENALTY_SKELETON
     if config.wizard['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
                                text=config.AFTER_AWAY + str(config.wizard['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.slime_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_SLIME)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
         while config.wizard['health'] > 0 and config.slime['health'] > 0:
             w_push = random.randint(1, config.wizard['power'])
@@ -588,6 +613,7 @@ async def wizard2_2_away(callback_query: types.CallbackQuery):
             config.wizard['health'] -= sl_push
             if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
                 config.slime['health'] = config.HP_SLIME
+                uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SLIME)
                 dp.stop_polling()
                 await dp.wait_closed()
@@ -610,17 +636,20 @@ async def wizard2_2_away(callback_query: types.CallbackQuery):
 async def wizard3_1_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_GOLEM)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.wizard['health'] -= 9
+    config.wizard['health'] -= config.ESCAPE_PENALTY_GOLEM
     if config.wizard['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
                                text=config.AFTER_AWAY + str(config.wizard['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.spider_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_SPIDER)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
         while config.wizard['health'] > 0 and config.spider['health'] > 0:
             w_push = random.randint(1, config.wizard['power'])
@@ -629,6 +658,7 @@ async def wizard3_1_away(callback_query: types.CallbackQuery):
             config.wizard['health'] -= sp_push
             if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
                 config.spider['health'] = config.HP_SPIDER
+                uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SPIDER)
                 dp.stop_polling()
                 await dp.wait_closed()
@@ -651,17 +681,20 @@ async def wizard3_1_away(callback_query: types.CallbackQuery):
 async def wizard3_2_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_SPIDER)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.wizard['health'] -= 5
+    config.wizard['health'] -= config.ESCAPE_PENALTY_SPIDER
     if config.wizard['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
                                text=config.AFTER_AWAY + str(config.wizard['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.golem_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_GOLEM)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
         while config.wizard['health'] > 0 and config.golem['health'] > 0:
             w_push = random.randint(1, config.golem['power'])
@@ -670,6 +703,7 @@ async def wizard3_2_away(callback_query: types.CallbackQuery):
             config.wizard['health'] -= g_push
             if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
                 config.golem['health'] = config.HP_GOLEM
+                uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_GOLEM)
                 dp.stop_polling()
                 await dp.wait_closed()
@@ -692,17 +726,20 @@ async def wizard3_2_away(callback_query: types.CallbackQuery):
 async def wizard4_1_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_SPIDER)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.wizard['health'] -= 5
+    config.wizard['health'] -= config.ESCAPE_PENALTY_SPIDER
     if config.wizard['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
                                text=config.AFTER_AWAY + str(config.wizard['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.skeleton_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_SKELETON)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
         while config.wizard['health'] > 0 and config.skeleton['health'] > 0:
             w_push = random.randint(1, config.wizard['power'])
@@ -711,6 +748,7 @@ async def wizard4_1_away(callback_query: types.CallbackQuery):
             config.wizard['health'] -= sk_push
             if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
                 config.skeleton['health'] = config.HP_SKELETON
+                uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SKELETON)
                 dp.stop_polling()
                 await dp.wait_closed()
@@ -733,17 +771,20 @@ async def wizard4_1_away(callback_query: types.CallbackQuery):
 async def wizard4_2_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_SKELETON)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.wizard['health'] -= 7
+    config.wizard['health'] -= config.ESCAPE_PENALTY_SKELETON
     if config.wizard['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
                                text=config.AFTER_AWAY + str(config.wizard['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.spider_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_SPIDER)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
         while config.wizard['health'] > 0 and config.spider['health'] > 0:
             w_push = random.randint(1, config.wizard['power'])
@@ -752,6 +793,7 @@ async def wizard4_2_away(callback_query: types.CallbackQuery):
             config.wizard['health'] -= sp_push
             if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
                 config.spider['health'] = config.HP_SPIDER
+                uploading_statistics_in_database(win_lose='Поражение', character='Wizard')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SPIDER)
                 dp.stop_polling()
                 await dp.wait_closed()
@@ -878,7 +920,7 @@ async def wizard_room5_delete_buttons(callback_query: types.CallbackQuery):
     config.knight['health'] += 15
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.BONUS_HP + str(config.knight['health']))
     await bot.send_media_group(chat_id=callback_query.from_user.id,
-                               media=[types.InputMediaPhoto(open(config.dragon_img_img, 'rb'))])
+                               media=[types.InputMediaPhoto(open(config.dragon_img, 'rb'))])
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.DRAGON_MEETING,
                            reply_markup=kb.knight_battle5)
 
@@ -900,7 +942,8 @@ async def knight1_1attack(callback_query: types.CallbackQuery):
         config.skeleton['health'] -= k_push
         config.knight['health'] -= sk_push
         if config.knight['health'] <= 0:  # Проверка жив ли персонаж
-            config.skeleton['health'] = config.HP_SKELETON  # Возвращаем здоровье скелету после драки
+            config.skeleton['health'] = config.HP_SKELETON  # Возвращаем здоровье скелету 
+            uploading_statistics_in_database(win_lose='Поражение', character='Knight')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SKELETON)
             dp.stop_polling()
             await dp.wait_closed()
@@ -931,6 +974,7 @@ async def knight1_2_attack(callback_query: types.CallbackQuery):
         config.knight['health'] -= sp_push
         if config.knight['health'] <= 0:  # Проверка жив ли персонаж
             config.spider['health'] = config.HP_SPIDER
+            uploading_statistics_in_database(win_lose='Поражение', character='Knight')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SPIDER)
             dp.stop_polling()
             await dp.wait_closed()
@@ -960,7 +1004,8 @@ async def knight2_1_attack(callback_query: types.CallbackQuery):
         config.slime['health'] -= k_push
         config.knight['health'] -= sl_push
         if config.knight['health'] <= 0:  # Проверка жив ли персонаж
-            config.slime['health'] = config.HP_SLIME  # Возвращаем здоровье слайму после драки
+            config.slime['health'] = config.HP_SLIME  # Возвращаем здоровье слайму
+            uploading_statistics_in_database(win_lose='Поражение', character='Knight')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SLIME)
             dp.stop_polling()
             await dp.wait_closed()
@@ -990,7 +1035,8 @@ async def knight2_2_attack(callback_query: types.CallbackQuery):
         config.skeleton['health'] -= k_push
         config.knight['health'] -= sk_push
         if config.knight['health'] <= 0:  # Проверка жив ли персонаж
-            config.skeleton['health'] = config.HP_SKELETON  # Возвращаем здоровье скелету после драки
+            config.skeleton['health'] = config.HP_SKELETON  # Возвращаем здоровье скелету
+            uploading_statistics_in_database(win_lose='Поражение', character='Knight')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SKELETON)
             dp.stop_polling()
             await dp.wait_closed()
@@ -1020,7 +1066,8 @@ async def knight3_1_attack(callback_query: types.CallbackQuery):
         config.golem['health'] -= k_push
         config.knight['health'] -= g_push
         if config.knight['health'] <= 0:  # Проверка жив ли персонаж
-            config.golem['health'] = config.HP_GOLEM  # Возвращаем здоровье голему после драки
+            config.golem['health'] = config.HP_GOLEM  # Возвращаем здоровье голему
+            uploading_statistics_in_database(win_lose='Поражение', character='Knight')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_GOLEM)
             dp.stop_polling()
             await dp.wait_closed()
@@ -1051,6 +1098,7 @@ async def knight3_2_attack(callback_query: types.CallbackQuery):
         config.knight['health'] -= sp_push
         if config.knight['health'] <= 0:  # Проверка жив ли персонаж
             config.spider['health'] = config.HP_SPIDER
+            uploading_statistics_in_database(win_lose='Поражение', character='Knight')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SPIDER)
             dp.stop_polling()
             await dp.wait_closed()
@@ -1080,7 +1128,8 @@ async def knight4_1_attack(callback_query: types.CallbackQuery):
         config.slime['health'] -= k_push
         config.knight['health'] -= sl_push
         if config.knight['health'] <= 0:  # Проверка жив ли персонаж
-            config.slime['health'] = config.HP_SLIME  # Возвращаем здоровье слайму после драки
+            config.slime['health'] = config.HP_SLIME  # Возвращаем здоровье слайму
+            uploading_statistics_in_database(win_lose='Поражение', character='Knight')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SLIME)
             dp.stop_polling()
             await dp.wait_closed()
@@ -1110,7 +1159,8 @@ async def knight3_1_attack(callback_query: types.CallbackQuery):
         config.golem['health'] -= k_push
         config.knight['health'] -= g_push
         if config.knight['health'] <= 0:  # Проверка жив ли персонаж
-            config.golem['health'] = config.HP_GOLEM  # Возвращаем здоровье голему после драки
+            config.golem['health'] = config.HP_GOLEM  # Возвращаем здоровье голему
+            uploading_statistics_in_database(win_lose='Поражение', character='Knight')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_GOLEM)
             dp.stop_polling()
             await dp.wait_closed()
@@ -1141,11 +1191,13 @@ async def knight5_attack(callback_query: types.CallbackQuery):
         config.knight['health'] -= dr_push
         if config.knight['health'] <= 0:  # Проверка жив ли персонаж
             config.dragon['health'] = config.HP_DRAGON
+            uploading_statistics_in_database(win_lose='Поражение', character='Knight')
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_DRAGON_WIZARD)
             break
         elif config.knight['health'] >= 1:
             config.dragon['health'] = config.HP_DRAGON
             await bot.send_message(chat_id=callback_query.from_user.id, text=config.END_GAME_KNIGHT)
+            uploading_statistics_in_database(win_lose='Победа', character='Knight')
             break
 
 
@@ -1159,17 +1211,20 @@ async def knight5_attack(callback_query: types.CallbackQuery):
 async def knight1_1_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_SKELETON)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.knight['health'] -= 7
+    config.knight['health'] -= config.ESCAPE_PENALTY_SKELETON
     if config.knight['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Knight')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
                                text=config.AFTER_AWAY + str(config.knight['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.spider_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_SPIDER)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
         while config.knight['health'] > 0 and config.spider['health'] > 0:
             k_push = random.randint(1, config.knight['power'])
@@ -1178,6 +1233,7 @@ async def knight1_1_away(callback_query: types.CallbackQuery):
             config.knight['health'] -= sp_push
             if config.knight['health'] <= 0:  # Проверка жив ли персонаж
                 config.spider['health'] = config.HP_SPIDER
+                uploading_statistics_in_database(win_lose='Поражение', character='Knight')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SPIDER)
                 dp.stop_polling()
                 await dp.wait_closed()
@@ -1200,17 +1256,20 @@ async def knight1_1_away(callback_query: types.CallbackQuery):
 async def knight_1_2_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_SPIDER)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.knight['health'] -= 5
+    config.knight['health'] -= config.ESCAPE_PENALTY_SPIDER
     if config.knight['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Knight')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
                                text=config.AFTER_AWAY + str(config.knight['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.skeleton_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_SKELETON)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
         while config.knight['health'] > 0 and config.skeleton['health'] > 0:
             k_push = random.randint(1, config.knight['power'])
@@ -1219,6 +1278,7 @@ async def knight_1_2_away(callback_query: types.CallbackQuery):
             config.knight['health'] -= sk_push
             if config.knight['health'] <= 0:  # Проверка жив ли персонаж
                 config.skeleton['health'] = config.HP_SKELETON
+                uploading_statistics_in_database(win_lose='Поражение', character='Knight')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SKELETON)
                 dp.stop_polling()
                 await dp.wait_closed()
@@ -1241,17 +1301,20 @@ async def knight_1_2_away(callback_query: types.CallbackQuery):
 async def knight2_1_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_SLIME)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.knight['health'] -= 3
+    config.knight['health'] -= config.ESCAPE_PENALTY_SLIME
     if config.knight['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Knight')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
                                text=config.AFTER_AWAY + str(config.knight['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.skeleton_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_SKELETON)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
         while config.knight['health'] > 0 and config.skeleton['health'] > 0:
             k_push = random.randint(1, config.knight['power'])
@@ -1260,6 +1323,7 @@ async def knight2_1_away(callback_query: types.CallbackQuery):
             config.knight['health'] -= sk_push
             if config.knight['health'] <= 0:  # Проверка жив ли персонаж
                 config.skeleton['health'] = config.HP_SKELETON
+                uploading_statistics_in_database(win_lose='Поражение', character='Knight')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SKELETON)
                 dp.stop_polling()
                 await dp.wait_closed()
@@ -1282,17 +1346,20 @@ async def knight2_1_away(callback_query: types.CallbackQuery):
 async def knight2_2_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_SKELETON)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.knight['health'] -= 7
+    config.knight['health'] -= config.ESCAPE_PENALTY_SKELETON
     if config.knight['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Knight')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
                                text=config.AFTER_AWAY + str(config.knight['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.slime_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_SLIME)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
         while config.knight['health'] > 0 and config.slime['health'] > 0:
             k_push = random.randint(1, config.knight['power'])
@@ -1301,6 +1368,7 @@ async def knight2_2_away(callback_query: types.CallbackQuery):
             config.knight['health'] -= sl_push
             if config.knight['health'] <= 0:  # Проверка жив ли персонаж
                 config.slime['health'] = config.HP_SLIME
+                uploading_statistics_in_database(win_lose='Поражение', character='Knight')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SLIME)
                 dp.stop_polling()
                 await dp.wait_closed()
@@ -1319,43 +1387,47 @@ async def knight2_2_away(callback_query: types.CallbackQuery):
 
 
 # Действия при побеге 3_1(переход в 3_2(битва с пауком))
-@dp.callback_query_handler(lambda x: x.data == "wizard_away3_1")
-async def wizard3_1_away(callback_query: types.CallbackQuery):
+@dp.callback_query_handler(lambda x: x.data == "knight_away3_1")
+async def knight3_1_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_GOLEM)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.wizard['health'] -= 9
-    if config.wizard['health'] <= 0:  # если нет здоровья - конец
+    config.knight['health'] -= config.ESCAPE_PENALTY_GOLEM
+    if config.knight['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Knight')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
-                               text=config.AFTER_AWAY + str(config.wizard['health']))
+                               text=config.AFTER_AWAY + str(config.knight['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.spider_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_SPIDER)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
-        while config.wizard['health'] > 0 and config.spider['health'] > 0:
-            w_push = random.randint(1, config.wizard['power'])
+        while config.knight['health'] > 0 and config.spider['health'] > 0:
+            k_push = random.randint(1, config.knight['power'])
             sp_push = random.randint(1, config.spider['power'])
-            config.spider['health'] -= w_push
-            config.wizard['health'] -= sp_push
-            if config.wizard['health'] <= 0:  # Проверка жив ли персонаж
+            config.spider['health'] -= k_push
+            config.knight['health'] -= sp_push
+            if config.knight['health'] <= 0:  # Проверка жив ли персонаж
                 config.spider['health'] = config.HP_SPIDER
+                uploading_statistics_in_database(win_lose='Поражение', character='Knight')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SPIDER)
                 dp.stop_polling()
                 await dp.wait_closed()
                 await bot.close()
                 break
-            elif config.wizard['health'] >= 1:
+            elif config.knight['health'] >= 1:
                 config.spider['health'] = config.HP_SPIDER
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_WIN_SPIDER)
                 # Вывод здоровья
                 await bot.send_message(chat_id=callback_query.from_user.id,
-                                       text=config.AFTER_FIGHT_HP + str(config.wizard['health']))
+                                       text=config.AFTER_FIGHT_HP + str(config.knight['health']))
                 time.sleep(1)
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.ROOM_SPIDER,
-                                       reply_markup=kb.wizard_doors4)
+                                       reply_markup=kb.knight_doors4)
                 break
 
 
@@ -1364,17 +1436,20 @@ async def wizard3_1_away(callback_query: types.CallbackQuery):
 async def knight3_2_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_SPIDER)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.knight['health'] -= 5
+    config.knight['health'] -= config.ESCAPE_PENALTY_SPIDER
     if config.knight['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Knight')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
                                text=config.AFTER_AWAY + str(config.knight['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.golem_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_GOLEM)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
         while config.knight['health'] > 0 and config.golem['health'] > 0:
             k_push = random.randint(1, config.golem['power'])
@@ -1383,6 +1458,7 @@ async def knight3_2_away(callback_query: types.CallbackQuery):
             config.knight['health'] -= g_push
             if config.knight['health'] <= 0:  # Проверка жив ли персонаж
                 config.golem['health'] = config.HP_GOLEM
+                uploading_statistics_in_database(win_lose='Поражение', character='Knight')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_GOLEM)
                 dp.stop_polling()
                 await dp.wait_closed()
@@ -1405,17 +1481,20 @@ async def knight3_2_away(callback_query: types.CallbackQuery):
 async def knight4_1_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_SLIME)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.knight['health'] -= 3
+    config.knight['health'] -= config.ESCAPE_PENALTY_SLIME
     if config.knight['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Knight')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
                                text=config.AFTER_AWAY + str(config.knight['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.golem_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_GOLEM)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
         while config.knight['health'] > 0 and config.golem['health'] > 0:
             k_push = random.randint(1, config.golem['power'])
@@ -1424,6 +1503,7 @@ async def knight4_1_away(callback_query: types.CallbackQuery):
             config.knight['health'] -= g_push
             if config.knight['health'] <= 0:  # Проверка жив ли персонаж
                 config.golem['health'] = config.HP_GOLEM
+                uploading_statistics_in_database(win_lose='Поражение', character='Knight')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_GOLEM)
                 dp.stop_polling()
                 await dp.wait_closed()
@@ -1446,17 +1526,20 @@ async def knight4_1_away(callback_query: types.CallbackQuery):
 async def knight4_2_away(callback_query: types.CallbackQuery):
     await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, None, None)
     await bot.send_message(chat_id=callback_query.from_user.id, text=config.AWAY_TEXT_GOLEM)
-    time.sleep(2)
+    time.sleep(1)
     # Проверка количества здоровья после побега
-    config.knight['health'] -= 9
+    config.knight['health'] -= config.ESCAPE_PENALTY_GOLEM
     if config.knight['health'] <= 0:  # если нет здоровья - конец
         await bot.send_message(callback_query.from_user.id, text=config.NO_HP_DEAD)
+        uploading_statistics_in_database(win_lose='Поражение', character='Knight')
     else:  # если здоровье есть
         await bot.send_message(chat_id=callback_query.from_user.id,
                                text=config.AFTER_AWAY + str(config.knight['health']))
         time.sleep(1)
+        await bot.send_media_group(chat_id=callback_query.from_user.id,
+                                   media=[types.InputMediaPhoto(open(config.slime_img, 'rb'))])
         await bot.send_message(chat_id=callback_query.from_user.id, text=config.TRANSITION_SLIME)
-        time.sleep(2)
+        time.sleep(1)
         # Цикл атаки
         while config.knight['health'] > 0 and config.slime['health'] > 0:
             k_push = random.randint(1, config.knight['power'])
@@ -1465,6 +1548,7 @@ async def knight4_2_away(callback_query: types.CallbackQuery):
             config.knight['health'] -= sl_push
             if config.knight['health'] <= 0:  # Проверка жив ли персонаж
                 config.slime['health'] = config.HP_SLIME
+                uploading_statistics_in_database(win_lose='Поражение', character='Knight')
                 await bot.send_message(chat_id=callback_query.from_user.id, text=config.YOU_DEAD_SLIME)
                 dp.stop_polling()
                 await dp.wait_closed()

@@ -1,6 +1,8 @@
 TOKEN_API = "6598630985:AAH6hm8idDR8J4SxkhljfEzBoYnKE4Q4X4s"
 # tg: @Dungeon_GameBot
 
+db_file = 'Dungeon_Game.sqlite'
+
 # Пути к изображениям персонажей и монстров
 wizard_img = 'image/wizard.png'
 knight_img = 'image/knight.png'
@@ -26,6 +28,12 @@ golem = dict(name='Голем', power=30, health=50)
 # Характеристики боссов
 demon = dict(name='Демон', power=40, health=100)  # Босс для Волшебника
 dragon = dict(name='Дракон', power=35, health=100)  # Босс для Рыцаря
+
+# Количество здоровья, которое будет сниматься за побег от определенных монстров
+ESCAPE_PENALTY_SLIME = 3
+ESCAPE_PENALTY_SPIDER = 4
+ESCAPE_PENALTY_SKELETON = 5
+ESCAPE_PENALTY_GOLEM = 6
 
 # Здоровье персонажей
 HP_KNIGHT = 70
