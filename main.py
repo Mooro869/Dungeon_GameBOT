@@ -12,12 +12,12 @@ import keyboard as kb
 # @Dungeon_GameBot
 # Основные переменные бота
 bot = Bot(token=config.TOKEN_API)
-# bot = Bot(token=config.TOKEN_API, proxy='http://10.0.48.52:3128')
 dp = Dispatcher(bot=bot)
 
 chart_name = ''  # Переменная, в которую будет записываться имя персонажа выбранного игроком
 status = ''  # Переменная, в которой хранится информация о победе или поражении игрока
 date = datetime.now().strftime("%Y-%m-%d %H:%M")  # Получаем текущую дату и время
+
 
 # Функция для записи статистики в БД
 def uploading_statistics_in_database(username, times=date, win_lose=status, character=chart_name):
@@ -28,6 +28,7 @@ def uploading_statistics_in_database(username, times=date, win_lose=status, char
         (username, times, win_lose, character))
     conn.commit()
     conn.close()
+
 
 # Функция для получения статистики из БД
 def get_statistic(username):
