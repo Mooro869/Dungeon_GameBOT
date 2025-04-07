@@ -2,10 +2,9 @@ from aiogram import types
 
 # Кнопки при запуске бота
 keyb = types.ReplyKeyboardMarkup(resize_keyboard=True)
-info_button = types.KeyboardButton('Информацияℹ️')
 start_game = types.KeyboardButton('Начать игру🎮')
 statistic_button = types.KeyboardButton('Статистика📋')
-keyb.add(start_game, statistic_button, info_button)
+keyb.add(start_game, statistic_button)
 
 # Кнопки персонажей
 persons_button = types.InlineKeyboardMarkup(row_width=2)

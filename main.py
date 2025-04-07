@@ -19,7 +19,7 @@ chart_name = ''  # Переменная, в которую будет запис
 status = ''  # Переменная, в которой хранится информация о победе или поражении игрока
 date = datetime.now().strftime("%Y-%m-%d %H:%M")  # Получаем текущую дату и время
 
-
+# Функция для записи статистики в БД
 def uploading_statistics_in_database(username, times=date, win_lose=status, character=chart_name):
     conn = sqlite3.connect(config.db_file)
     cursor = conn.cursor()
@@ -29,9 +29,56 @@ def uploading_statistics_in_database(username, times=date, win_lose=status, char
     conn.commit()
     conn.close()
 
+# Функция для получения статистики из БД
+def get_statistic(username):
+    conn = sqlite3.connect(config.db_file)
+    cursor = conn.cursor()
 
-def get_statistic():
-    ...  # тут будет запрос, который будет выводить нужную статистику по username
+    # Получаем общее количество игр
+    cursor.execute("SELECT COUNT(*) FROM Rating WHERE username = ?", (username,))
+    total_games = cursor.fetchone()[0]
+
+    # Получаем количество побед
+    cursor.execute("SELECT COUNT(*) FROM Rating WHERE username = ? AND win_lose = 'Победа'", (username,))
+    wins = cursor.fetchone()[0]
+
+    # Получаем количество поражений
+    cursor.execute("SELECT COUNT(*) FROM Rating WHERE username = ? AND win_lose = 'Поражение'", (username,))
+    losses = cursor.fetchone()[0]
+
+    # Получаем статистику по персонажам
+    cursor.execute("""
+        SELECT character, COUNT(*) as count, 
+               SUM(CASE WHEN win_lose = 'Победа' THEN 1 ELSE 0 END) as wins
+        FROM Rating 
+        WHERE username = ?
+        GROUP BY character
+    """, (username,))
+    character_stats = cursor.fetchall()
+
+    conn.close()
+
+    # Формируем сообщение
+    message = f"📊 Статистика для @{username}:\n\n"
+    message += f"🎮 Всего игр: {total_games}\n"
+    message += f"🏆 Побед: {wins}\n"
+    message += f"💀 Поражений: {losses}\n"
+
+    if total_games > 0:
+        win_rate = (wins / total_games) * 100
+        message += f"📈 Процент побед: {win_rate:.1f}%\n\n"
+    else:
+        message += "\n"
+
+    if character_stats:
+        message += "🧙 Персонажи:\n"
+        for char, count, char_wins in character_stats:
+            char_win_rate = (char_wins / count) * 100 if count > 0 else 0
+            message += f"  - {char}: {count} игр ({char_wins} побед, {char_win_rate:.1f}%)\n"
+    else:
+        message += "Вы еще не играли ни за одного персонажа.\n"
+
+    return message
 
 
 # ОСНОВНЫЕ КНОПКИ
@@ -42,13 +89,8 @@ async def start_command(message: types.Message):
 
 @dp.message_handler(text=['Статистика📋'])
 async def information_command(message: types.Message):
-    await message.answer(text='ТУТ СКОРО БУДЕТ СТАТИСТИКА!')
-    # await message.answer(text=get_statistic(...))
-
-
-@dp.message_handler(text=['Информацияℹ️'])
-async def information_command(message: types.Message):
-    await message.answer(text=config.INFORMATION_TEXT)
+    name = message.from_user.username or message.from_user.first_name
+    await message.answer(text=get_statistic(username=name))
 
 
 @dp.message_handler(text=['Начать игру🎮'])
