@@ -1,4 +1,5 @@
 # Dungeon Game Bot
+tg: https://t.me/Dungeon_GameBot
 
 Телеграм-бот в жанре текстового RPG с выбором персонажа и пошаговыми боями.
 
