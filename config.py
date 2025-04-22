@@ -1,4 +1,4 @@
-TOKEN_API = "6598630985:AAH6hm8idDR8J4SxkhljfEzBoYnKE4Q4X4s"
+TOKEN_API = "7743234728:AAHAZNm7sD__CG2_V5Jd0VmOJk3ThRAnDWw"
 # tg: @Dungeon_GameBot
 
 db_file = 'Dungeon_Game.sqlite'
