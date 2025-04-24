@@ -1,4 +1,4 @@
-TOKEN_API = ""
+TOKEN_API = "YOUR TOKEN"
 # tg: @Dungeon_GameBot
 
 db_file = 'Dungeon_Game.sqlite'
